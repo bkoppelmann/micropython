@@ -3,7 +3,7 @@ include ../../py/mkenv.mk
 FREEDOM_E_SDK ?= $(HOME)/src/freedom-e-sdk
 
 BSP_BASE = $(FREEDOM_E_SDK)/bsp
-BOARD ?= freedom-e300-arty
+BOARD ?= freedom-e300-hifive1
 #BOARD ?= coreplexip-e31-arty
 #BOARD ?= coreplexip-e51-arty
 LINK_TARGET = flash
