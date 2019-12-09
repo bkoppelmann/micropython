@@ -27,7 +27,15 @@
 #define MICROPY_INCLUDED_UPDUINO_MODPYB_H
 
 extern const mp_obj_type_t pyb_led_type;
+
+typedef struct _pyb_spi_obj_t {
+    mp_obj_base_t base;
+    uint32_t freq;
+    uint32_t cs, cs_arduino;
+} pyb_spi_obj_t;
 extern const mp_obj_type_t pyb_spi_type;
+
+extern const mp_obj_type_t pyb_lmx2594_type;
 extern const mp_obj_module_t pyb_module;
 
 #endif // MICROPY_INCLUDED_UPDUINO_MODPYB_H

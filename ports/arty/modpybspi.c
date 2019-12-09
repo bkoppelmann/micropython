@@ -28,12 +28,6 @@
 #include "board.h"
 #include "modpyb.h"
 
-typedef struct _pyb_spi_obj_t {
-    mp_obj_base_t base;
-    uint32_t freq;
-    uint32_t cs, cs_arduino;
-} pyb_spi_obj_t;
-
 uint32_t pin_mapping[20] =
 {
     16, 17, 18, 19, 20, 21, 22, 23, 0, 1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13

@@ -46,6 +46,9 @@ SRC_C = \
 	board.c \
 	modpyb.c \
 	modpybled.c \
+	modpybspi.c \
+	modpyblmx2594.c \
+	hifive1_spi.c \
 	$(PLATFORM_DIR)/init.c \
 	lib/utils/stdout_helpers.c \
 	lib/utils/pyexec.c \

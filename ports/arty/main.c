@@ -48,33 +48,6 @@ void do_str(const char *src, mp_parse_input_kind_t input_kind) {
 static char *stack_top;
 static char heap[1024*8];
 
-static const char sifive_msg[] = "\n\r\
-\n\r\
-                SIFIVE, INC.\n\r\
-\n\r\
-         5555555555555555555555555\n\r\
-        5555                   5555\n\r\
-       5555                     5555\n\r\
-      5555                       5555\n\r\
-     5555       5555555555555555555555\n\r\
-    5555       555555555555555555555555\n\r\
-   5555                             5555\n\r\
-  5555                               5555\n\r\
- 5555                                 5555\n\r\
-5555555555555555555555555555          55555\n\r\
- 55555           555555555           55555\n\r\
-   55555           55555           55555\n\r\
-     55555           5           55555\n\r\
-       55555                   55555\n\r\
-         55555               55555\n\r\
-           55555           55555\n\r\
-             55555       55555\n\r\
-               55555   55555\n\r\
-                 555555555\n\r\
-                   55555\n\r\
-                     5\n\r\
-\n\r";
-
 int main(int argc, char **argv) {
     int stack_dummy;
     stack_top = (char*)&stack_dummy;
@@ -83,8 +56,6 @@ int main(int argc, char **argv) {
 
     led_init();
     
-	printf(sifive_msg);
-
     gc_init(heap, heap + sizeof(heap));
     mp_init();
     pyexec_friendly_repl();
