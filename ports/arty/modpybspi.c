@@ -58,39 +58,85 @@ STATIC mp_obj_t pyb_spi_make_new(const mp_obj_type_t *type, size_t n_args, size_
     return MP_OBJ_FROM_PTR(self);
 }
 
-STATIC mp_obj_t pyb_spi_write(uint n_args, const mp_obj_t *args) {
+STATIC mp_obj_t pyb_spi_write_mem(uint n_args, const mp_obj_t *args) {
     pyb_spi_obj_t *self = args[0];
     union {
         uint16_t raw;
-        uint8_t array[2];
+        uint8_t array[4];
     } data_ptr;
 
-    uint8_t addr = mp_obj_get_int(args[1]);
-    data_ptr.raw = mp_obj_get_int(args[2]);
+    union {
+        uint16_t raw;
+        uint8_t array[4];
+    } addr_ptr;
 
-    spi_write(self->cs, addr, data_ptr.array, 2);
+    uint8_t cmd = mp_obj_get_int(args[1]);
+    addr_ptr.raw = mp_obj_get_int(args[2]);
+    data_ptr.raw = mp_obj_get_int(args[3]);
+
+    spi_write(self->cs, cmd, addr_ptr.array, data_ptr.array, 4);
     return mp_const_none;
 }
-STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(pyb_spi_write_obj, 3, 3, pyb_spi_write);
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(pyb_spi_write_mem_obj, 4, 4, pyb_spi_write_mem);
 
-STATIC mp_obj_t pyb_spi_read(uint n_args, const mp_obj_t *args) {
+STATIC mp_obj_t pyb_spi_write_reg(uint n_args, const mp_obj_t *args) {
     pyb_spi_obj_t *self = args[0];
     union {
         uint16_t raw;
         uint8_t array[2];
     } data_ptr;
 
+    uint8_t cmd = mp_obj_get_int(args[1]);
+    data_ptr.raw = mp_obj_get_int(args[2]);
+
+    spi_write(self->cs, cmd, NULL, data_ptr.array, 2);
+    return mp_const_none;
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(pyb_spi_write_reg_obj, 3, 3, pyb_spi_write_reg);
+
+
+STATIC mp_obj_t pyb_spi_read_reg(uint n_args, const mp_obj_t *args) {
+    pyb_spi_obj_t *self = args[0];
+    union {
+        uint16_t raw;
+        uint8_t array[4];
+    } data_ptr;
+
     uint8_t addr = mp_obj_get_int(args[1]);
-    spi_read(self->cs, addr, data_ptr.array, 2);
+    spi_read(self->cs, addr, NULL, data_ptr.array, 4);
 
     return MP_OBJ_NEW_SMALL_INT(data_ptr.raw);
 }
-STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(pyb_spi_read_obj, 2, 2, pyb_spi_read);
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(pyb_spi_read_reg_obj, 2, 2, pyb_spi_read_reg);
+
+STATIC mp_obj_t pyb_spi_read_mem(uint n_args, const mp_obj_t *args) {
+    pyb_spi_obj_t *self = args[0];
+    union {
+        uint16_t raw;
+        uint8_t array[4];
+    } data_ptr;
+
+    union {
+        uint16_t raw;
+        uint8_t array[4];
+    } addr_ptr;
+
+
+    uint8_t cmd = mp_obj_get_int(args[1]);
+    addr_ptr.raw = mp_obj_get_int(args[2]);
+    spi_read(self->cs, cmd, addr_ptr.array, data_ptr.array, 4);
+
+    return MP_OBJ_NEW_SMALL_INT(data_ptr.raw);
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(pyb_spi_read_mem_obj, 3, 3, pyb_spi_read_mem);
+
 
 
 STATIC const mp_rom_map_elem_t pyb_spi_locals_dict_table[] = {
-    { MP_ROM_QSTR(MP_QSTR_write), MP_ROM_PTR(&pyb_spi_write_obj) },
-    { MP_ROM_QSTR(MP_QSTR_read), MP_ROM_PTR(&pyb_spi_read_obj) },
+    { MP_ROM_QSTR(MP_QSTR_write_mem), MP_ROM_PTR(&pyb_spi_write_mem_obj) },
+    { MP_ROM_QSTR(MP_QSTR_write_reg), MP_ROM_PTR(&pyb_spi_write_reg_obj) },
+    { MP_ROM_QSTR(MP_QSTR_read_mem), MP_ROM_PTR(&pyb_spi_read_mem_obj) },
+    { MP_ROM_QSTR(MP_QSTR_read_reg), MP_ROM_PTR(&pyb_spi_read_reg_obj) },
 };
 
 STATIC MP_DEFINE_CONST_DICT(pyb_spi_locals_dict, pyb_spi_locals_dict_table);

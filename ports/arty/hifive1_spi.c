@@ -22,11 +22,6 @@ typedef enum {
     MSBFIRST
 } BitOrder;
 
-static void cwait(uint32_t cycle_delay)
-{
-    volatile uint32_t i;
-    for (i = 0; i < cycle_delay; ++i);
-}
 
 void spi_setClockDivider(uint8_t _divider) {
   SPI_REG(SPI_REG_SCKDIV) = _divider;
@@ -57,27 +52,36 @@ uint8_t spi_transfer(uint8_t _data, SPITransferMode _mode) {
   }
 }
 
-int8_t spi_write(uint32_t cs, uint8_t reg_addr, uint8_t *data,
+int8_t spi_write(uint32_t cs, uint8_t cmd, uint8_t *addr, uint8_t *data,
                  uint16_t len)
 {
-    uint8_t wr_addr = reg_addr & ~(1 << 7); // set R/W bit to write
     GPIO_REG(GPIO_OUTPUT_VAL) &= ~BIT(cs);
-    spi_transfer(wr_addr, SPI_CONTINUE);
+    spi_transfer(cmd, SPI_CONTINUE);
+
+    if (addr != NULL) {
+        for (int i = len-1; i >= 0; --i) {
+            spi_transfer(addr[i], SPI_CONTINUE);
+        }
+    }
     for (int i = len-1; i > 0; --i) {
         spi_transfer(data[i], SPI_CONTINUE);
     }
     spi_transfer(data[0], SPI_LAST);
     GPIO_REG(GPIO_OUTPUT_VAL) |= BIT(cs);
-    cwait(500000);
     return 0;
 }
 
-int8_t spi_read(uint32_t cs, uint8_t reg_addr, uint8_t *data,
+int8_t spi_read(uint32_t cs, uint8_t reg_addr, uint8_t *addr, uint8_t *data,
                 uint16_t len)
 {
-    uint8_t r_addr = reg_addr | (1 << 7); // set R/W bit to read
     GPIO_REG(GPIO_OUTPUT_VAL) &= ~BIT(cs);
-    spi_transfer(r_addr, SPI_CONTINUE);
+    spi_transfer(reg_addr, SPI_CONTINUE);
+
+    if (addr != NULL) {
+        for (int i = 31; i >= 0; --i) {
+            spi_transfer(addr[i], SPI_CONTINUE);
+        }
+    }
 
     for (int i = len-1; i > 0; --i) {
         data[i] = spi_transfer(reg_addr, SPI_CONTINUE);

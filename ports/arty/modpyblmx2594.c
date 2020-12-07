@@ -79,16 +79,16 @@ uint16_t reg_map[113] =
 };
 
 mp_obj_t pyb_lmx2594_reset(mp_obj_t self_in) {
-    pyb_lmx2594_obj_t *self = self_in;
-    union {
-        uint16_t raw;
-        uint8_t i8[2];
-    } data_conv;
-    for (int i = 112; i>=0 ; i--) {
-        data_conv.raw = reg_map[i];
-        pyb_spi_obj_t *spi = self->spi;
-        spi_write(spi->cs, i, data_conv.i8, 2);
-    }
+//    pyb_lmx2594_obj_t *self = self_in;
+//    union {
+//        uint16_t raw;
+//        uint8_t i8[2];
+//    } data_conv;
+//    for (int i = 112; i>=0 ; i--) {
+//        data_conv.raw = reg_map[i];
+//        pyb_spi_obj_t *spi = self->spi;
+//        spi_write(spi->cs, i, data_conv.i8, 2);
+//    }
     return mp_const_none;
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(pyb_lmx2594_reset_obj, pyb_lmx2594_reset);
